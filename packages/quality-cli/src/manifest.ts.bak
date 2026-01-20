@@ -1,0 +1,263 @@
+/**
+ * Quality Plugin Manifest V3
+ *
+ * Monorepo quality analysis and automated fixes
+ */
+
+import {
+  combinePermissions,
+  kbPlatformPreset,
+  defineCommandFlags,
+} from '@kb-labs/sdk';
+import {
+  statsFlags,
+  healthFlags,
+  fixDepsFlags,
+  buildOrderFlags,
+  cyclesFlags,
+  visualizeFlags,
+} from './cli/commands/flags.js';
+
+/**
+ * Build permissions using V3 combinePermissions builder pattern.
+ * Quality plugin needs read/write access to entire monorepo for analysis and fixes.
+ */
+const pluginPermissions = combinePermissions()
+  .with(kbPlatformPreset)
+  .withFs({
+    mode: 'readWrite',
+    allow: ['**'], // Access to entire monorepo
+  })
+  .withPlatform({
+    cache: ['quality:'],  // Cache namespace prefix
+    analytics: true,      // Track command usage
+  })
+  .withQuotas({
+    timeoutMs: 300000,      // 5 minutes for long-running operations
+    memoryMb: 1024,         // 1GB memory
+  })
+  .build();
+
+export const manifest = {
+  schema: 'kb.plugin/3',
+  id: '@kb-labs/quality',
+  version: '0.1.0',
+
+  display: {
+    name: 'Quality Tools',
+    description: 'Monorepo quality analysis and automated fixes',
+    tags: ['quality', 'monorepo', 'analysis', 'devtools'],
+  },
+
+  platform: {
+    requires: ['storage', 'cache'],
+    optional: ['analytics', 'logger'],
+  },
+
+  cli: {
+    commands: [
+      // ======================================================================
+      // quality:stats - Monorepo statistics and health score
+      // ======================================================================
+      {
+        id: 'quality:stats',
+        group: 'quality',
+        describe: 'Get monorepo statistics and health score',
+        longDescription:
+          'Analyzes monorepo structure, collects package statistics, dependency info, and calculates health score. ' +
+          'Results are cached for 5 minutes.',
+
+        handler: './cli/commands/stats.js#default',
+        handlerPath: './cli/commands/stats.js',
+
+        flags: defineCommandFlags(statsFlags),
+
+        examples: [
+          'kb quality:stats',
+          'kb quality:stats --health',
+          'kb quality:stats --json',
+          'kb quality:stats --md',
+        ],
+
+        permissions: pluginPermissions,
+      },
+
+      // ======================================================================
+      // quality:health - Monorepo health check
+      // ======================================================================
+      {
+        id: 'quality:health',
+        group: 'quality',
+        describe: 'Check monorepo health score',
+        longDescription:
+          'Analyzes monorepo health including dependency issues, structure problems, and build health. ' +
+          'Returns health score (0-100) with grade (A-F) and actionable recommendations.',
+
+        handler: './cli/commands/health.js#default',
+        handlerPath: './cli/commands/health.js',
+
+        flags: defineCommandFlags(healthFlags),
+
+        examples: [
+          'kb quality:health',
+          'kb quality:health --detailed',
+          'kb quality:health --package @kb-labs/core',
+          'kb quality:health --json',
+        ],
+
+        permissions: pluginPermissions,
+      },
+
+      // ======================================================================
+      // quality:fix-deps - Dependency auto-fixer
+      // ======================================================================
+      {
+        id: 'quality:fix-deps',
+        group: 'quality',
+        describe: 'Auto-fix dependency issues',
+        longDescription:
+          'Automatically fixes dependency issues including removing unused deps, adding missing workspace deps, ' +
+          'and aligning duplicate versions. Supports --dry-run for previewing changes.',
+
+        handler: './cli/commands/fix-deps.js#default',
+        handlerPath: './cli/commands/fix-deps.js',
+
+        flags: defineCommandFlags(fixDepsFlags),
+
+        examples: [
+          'kb quality:fix-deps --stats',
+          'kb quality:fix-deps --remove-unused --dry-run',
+          'kb quality:fix-deps --align-versions',
+          'kb quality:fix-deps --all --dry-run',
+        ],
+
+        permissions: pluginPermissions,
+      },
+
+      // ======================================================================
+      // quality:build-order - Calculate build order with topological sort
+      // ======================================================================
+      {
+        id: 'quality:build-order',
+        group: 'quality',
+        describe: 'Calculate build order using topological sort',
+        longDescription:
+          'Analyzes package dependencies and calculates correct build order using topological sort. ' +
+          'Shows build layers where each layer can be built in parallel. Detects circular dependencies.',
+
+        handler: './cli/commands/build-order.js#default',
+        handlerPath: './cli/commands/build-order.js',
+
+        flags: defineCommandFlags(buildOrderFlags),
+
+        examples: [
+          'kb quality:build-order',
+          'kb quality:build-order --layers',
+          'kb quality:build-order --package @kb-labs/core',
+          'kb quality:build-order --script > build.sh',
+        ],
+
+        permissions: pluginPermissions,
+      },
+
+      // ======================================================================
+      // quality:cycles - Detect circular dependencies
+      // ======================================================================
+      {
+        id: 'quality:cycles',
+        group: 'quality',
+        describe: 'Detect circular dependencies',
+        longDescription:
+          'Uses DFS to find all circular dependency chains in the monorepo. ' +
+          'Shows complete dependency cycles with recommendations for breaking them.',
+
+        handler: './cli/commands/cycles.js#default',
+        handlerPath: './cli/commands/cycles.js',
+
+        flags: defineCommandFlags(cyclesFlags),
+
+        examples: [
+          'kb quality:cycles',
+          'kb quality:cycles --json',
+        ],
+
+        permissions: pluginPermissions,
+      },
+
+      // ======================================================================
+      // quality:visualize - Visualize dependency graph
+      // ======================================================================
+      {
+        id: 'quality:visualize',
+        group: 'quality',
+        describe: 'Visualize dependency graph',
+        longDescription:
+          'Visualize monorepo dependency graph in various formats: tree view, DOT format for graphviz, ' +
+          'reverse dependencies (who depends on this), impact analysis (what will be affected by changes), ' +
+          'and comprehensive graph statistics.',
+
+        handler: './cli/commands/visualize.js#default',
+        handlerPath: './cli/commands/visualize.js',
+
+        flags: defineCommandFlags(visualizeFlags),
+
+        examples: [
+          'kb quality:visualize --stats',
+          'kb quality:visualize --tree --package @kb-labs/core',
+          'kb quality:visualize --reverse --package @kb-labs/sdk',
+          'kb quality:visualize --impact --package @kb-labs/core',
+          'kb quality:visualize --dot > deps.dot',
+        ],
+
+        permissions: pluginPermissions,
+      },
+    ],
+  },
+
+  // REST API routes
+  rest: {
+    basePath: '/quality',
+    routes: [
+      // POST /stats
+      {
+        method: 'POST',
+        path: '/stats',
+        handler: './rest/handlers/stats-handler.js#default',
+      },
+      // POST /health
+      {
+        method: 'POST',
+        path: '/health',
+        handler: './rest/handlers/health-handler.js#default',
+      },
+      // POST /dependencies
+      {
+        method: 'POST',
+        path: '/dependencies',
+        handler: './rest/handlers/dependencies-handler.js#default',
+      },
+      // POST /build-order
+      {
+        method: 'POST',
+        path: '/build-order',
+        handler: './rest/handlers/build-order-handler.js#default',
+      },
+      // POST /cycles
+      {
+        method: 'POST',
+        path: '/cycles',
+        handler: './rest/handlers/cycles-handler.js#default',
+      },
+      // POST /graph
+      {
+        method: 'POST',
+        path: '/graph',
+        handler: './rest/handlers/graph-handler.js#default',
+      },
+    ],
+  },
+
+  permissions: pluginPermissions,
+};
+
+export default manifest;
