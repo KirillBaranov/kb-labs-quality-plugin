@@ -1,8 +1,8 @@
 {
-  "name": "@kb-labs/plugin-template",
+  "name": "@kb-labs/quality-plugin",
   "version": "0.1.0",
   "private": true,
-  "description": "Reference plugin template for the KB Labs ecosystem with devkit-powered tooling.",
+  "description": "KB Labs Quality Plugin provides monorepo health checks, dependency analysis, and automated fixes. Ensures code quality through comprehensive diagnostics, type safety validation, and intelligent dependency management across packages.",
   "type": "module",
   "author": {
     "name": "Kirill Baranov",
@@ -11,12 +11,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kirill-baranov/kb-labs-plugin-template.git"
+    "url": "https://github.com/kirill-baranov/kb-labs-quality-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/kirill-baranov/kb-labs-plugin-template/issues"
+    "url": "https://github.com/kirill-baranov/kb-labs-quality-plugin/issues"
   },
-  "homepage": "https://github.com/kirill-baranov/kb-labs-plugin-template#readme",
+  "homepage": "https://github.com/kirill-baranov/kb-labs-quality-plugin#readme",
   "workspaces": [
     "apps/*",
     "packages/*"
