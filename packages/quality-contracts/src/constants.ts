@@ -25,6 +25,9 @@ export const CACHE_KEYS = {
   EXPORTS: 'quality:exports',
   TYPES: 'quality:types',
   DUPLICATES: 'quality:duplicates',
+  BUILDS: 'quality:builds',
+  TYPE_ANALYSIS: 'quality:type-analysis',
+  TESTS: 'quality:tests',
 } as const;
 
 /**

@@ -47,3 +47,76 @@ export interface Recommendation {
   command?: string;
   priority: 'high' | 'medium' | 'low';
 }
+
+/**
+ * Build check result
+ */
+export interface BuildCheckResult {
+  totalPackages: number;
+  passing: number;
+  failing: number;
+  failures: Array<{
+    package: string;
+    error: string;
+    exitCode: number;
+  }>;
+  staleBuilds: Array<{
+    package: string;
+    distMtime: number;
+    srcMtime: number;
+  }>;
+  duration: number;
+}
+
+/**
+ * Type analysis result
+ */
+export interface TypeAnalysisResult {
+  totalPackages: number;
+  packagesWithErrors: number;
+  totalErrors: number;
+  totalWarnings: number;
+  avgCoverage: number;
+  packages: Array<{
+    name: string;
+    errors: number;
+    warnings: number;
+    coverage: number;
+    anyCount: number;
+    tsIgnoreCount: number;
+  }>;
+  duration: number;
+}
+
+/**
+ * Test run result
+ */
+export interface TestRunResult {
+  totalPackages: number;
+  passing: number;
+  failing: number;
+  skipped: number;
+  failures: Array<{
+    package: string;
+    error: string;
+    exitCode: number;
+    failedTests?: number;
+    totalTests?: number;
+  }>;
+  summary: {
+    totalTests: number;
+    passedTests: number;
+    failedTests: number;
+  };
+  coverage: {
+    avgCoverage: number;
+    packages: Array<{
+      name: string;
+      lines: number;
+      statements: number;
+      functions: number;
+      branches: number;
+    }>;
+  };
+  duration: number;
+}

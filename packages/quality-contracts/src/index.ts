@@ -12,6 +12,9 @@ export type {
   IssueSeverity,
   Issue,
   Recommendation,
+  BuildCheckResult,
+  TypeAnalysisResult,
+  TestRunResult,
 } from './types/common.js';
 
 // Stats types

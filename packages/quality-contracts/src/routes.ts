@@ -32,6 +32,15 @@ export const QUALITY_ROUTES = {
 
   /** GET /stale - Get stale packages */
   STALE: '/stale',
+
+  /** GET /builds - Get build status */
+  BUILDS: '/builds',
+
+  /** GET /types - Get type safety analysis */
+  TYPES: '/types',
+
+  /** GET /tests - Get test results and coverage */
+  TESTS: '/tests',
 } as const;
 
 /**
@@ -46,6 +55,9 @@ export const QUALITY_FULL_ROUTES = {
   CYCLES: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.CYCLES}`,
   GRAPH: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.GRAPH}`,
   STALE: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.STALE}`,
+  BUILDS: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.BUILDS}`,
+  TYPES: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.TYPES}`,
+  TESTS: `${QUALITY_BASE_PATH}${QUALITY_ROUTES.TESTS}`,
 } as const;
 
 export type QualityRoute = typeof QUALITY_ROUTES[keyof typeof QUALITY_ROUTES];
