@@ -12,6 +12,9 @@ export default defineConfig({
     'src/build-order/index.ts',
     'src/graph/index.ts',
     'src/stale/index.ts',
+    'src/builds/index.ts',
+    'src/types/index.ts',
+    'src/tests/index.ts',
   ],
   external: [
     '@kb-labs/sdk',

@@ -35,6 +35,18 @@
       "import": "./dist/stale/index.js",
       "types": "./dist/stale/index.d.ts"
     },
+    "./builds": {
+      "import": "./dist/builds/index.js",
+      "types": "./dist/builds/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./tests": {
+      "import": "./dist/tests/index.js",
+      "types": "./dist/tests/index.d.ts"
+    },
     "./dist/*": "./dist/*"
   },
   "files": [

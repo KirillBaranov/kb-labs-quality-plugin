@@ -10,3 +10,6 @@ export * from './graph/index.js';
 export * from './stats/index.js';
 export * from './health/index.js';
 export * from './dependencies/index.js';
+export * from './builds/index.js';
+export * from './types/index.js';
+export * from './tests/index.js';
