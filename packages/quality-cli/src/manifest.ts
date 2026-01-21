@@ -20,6 +20,9 @@ import {
   buildOrderFlags,
   cyclesFlags,
   visualizeFlags,
+  checkBuildsFlags,
+  checkTypesFlags,
+  checkTestsFlags,
 } from './cli/commands/flags.js';
 
 /**
@@ -39,6 +42,26 @@ const pluginPermissions = combinePermissions()
   .withQuotas({
     timeoutMs: 300000,      // 5 minutes for long-running operations
     memoryMb: 1024,         // 1GB memory
+  })
+  .build();
+
+/**
+ * Heavy operations permissions (builds, types, tests)
+ * These operations scan the entire monorepo and can take a long time
+ */
+const heavyOperationsPermissions = combinePermissions()
+  .with(kbPlatformPreset)
+  .withFs({
+    mode: 'readWrite',
+    allow: ['**'],
+  })
+  .withPlatform({
+    cache: ['quality:'],
+    analytics: true,
+  })
+  .withQuotas({
+    timeoutMs: 600000,      // 10 minutes for heavy operations
+    memoryMb: 2048,         // 2GB memory
   })
   .build();
 
@@ -215,6 +238,91 @@ export const manifest = {
 
         permissions: pluginPermissions,
       },
+
+      // ======================================================================
+      // quality:check-builds - Check build status across monorepo
+      // ======================================================================
+      {
+        id: 'quality:check-builds',
+        group: 'quality',
+        describe: 'Check build status across monorepo',
+        longDescription:
+          'Analyzes build status across all packages with build scripts. ' +
+          'Detects build failures with error messages and stale builds (dist/ older than src/). ' +
+          'Results are cached for 10 minutes.',
+
+        handler: './cli/commands/check-builds.js#default',
+        handlerPath: './cli/commands/check-builds.js',
+
+        flags: defineCommandFlags(checkBuildsFlags),
+
+        examples: [
+          'kb quality:check-builds',
+          'kb quality:check-builds --package @kb-labs/core',
+          'kb quality:check-builds --timeout 60000',
+          'kb quality:check-builds --json',
+          'kb quality:check-builds --refresh',
+        ],
+
+        permissions: heavyOperationsPermissions,
+      },
+
+      // ======================================================================
+      // quality:check-types - TypeScript type safety analysis
+      // ======================================================================
+      {
+        id: 'quality:check-types',
+        group: 'quality',
+        describe: 'Analyze TypeScript type safety across monorepo',
+        longDescription:
+          'Analyzes TypeScript type errors, warnings, and type coverage using TypeScript Compiler API. ' +
+          'Detects any usage, @ts-ignore comments, and calculates type coverage percentage. ' +
+          'Results are cached for 10 minutes.',
+
+        handler: './cli/commands/check-types.js#default',
+        handlerPath: './cli/commands/check-types.js',
+
+        flags: defineCommandFlags(checkTypesFlags),
+
+        examples: [
+          'kb quality:check-types',
+          'kb quality:check-types --package @kb-labs/core',
+          'kb quality:check-types --errors-only',
+          'kb quality:check-types --json',
+          'kb quality:check-types --refresh',
+        ],
+
+        permissions: heavyOperationsPermissions,
+      },
+
+      // ======================================================================
+      // quality:check-tests - Test execution and coverage tracking
+      // ======================================================================
+      {
+        id: 'quality:check-tests',
+        group: 'quality',
+        describe: 'Run tests and track coverage across monorepo',
+        longDescription:
+          'Runs tests across all packages with test scripts and collects coverage statistics. ' +
+          'Parses test output (vitest/jest) to extract test counts and reads coverage-summary.json. ' +
+          'Results are cached for 5 minutes.',
+
+        handler: './cli/commands/check-tests.js#default',
+        handlerPath: './cli/commands/check-tests.js',
+
+        flags: defineCommandFlags(checkTestsFlags),
+
+        examples: [
+          'kb quality:check-tests',
+          'kb quality:check-tests --package @kb-labs/core',
+          'kb quality:check-tests --with-coverage',
+          'kb quality:check-tests --coverage-only',
+          'kb quality:check-tests --timeout 120000',
+          'kb quality:check-tests --json',
+        ],
+
+        permissions: heavyOperationsPermissions,
+      },
     ],
   },
 
@@ -304,6 +412,42 @@ export const manifest = {
         },
         output: {
           zod: '@kb-labs/quality-contracts#StaleResponseSchema',
+        },
+      },
+      // GET /builds
+      {
+        method: 'GET',
+        path: QUALITY_ROUTES.BUILDS,
+        handler: './rest/handlers/builds-handler.js#default',
+        input: {
+          zod: '@kb-labs/quality-contracts#BuildsRequestSchema',
+        },
+        output: {
+          zod: '@kb-labs/quality-contracts#BuildsResponseSchema',
+        },
+      },
+      // GET /types
+      {
+        method: 'GET',
+        path: QUALITY_ROUTES.TYPES,
+        handler: './rest/handlers/types-handler.js#default',
+        input: {
+          zod: '@kb-labs/quality-contracts#TypesRequestSchema',
+        },
+        output: {
+          zod: '@kb-labs/quality-contracts#TypesResponseSchema',
+        },
+      },
+      // GET /tests
+      {
+        method: 'GET',
+        path: QUALITY_ROUTES.TESTS,
+        handler: './rest/handlers/tests-handler.js#default',
+        input: {
+          zod: '@kb-labs/quality-contracts#TestsRequestSchema',
+        },
+        output: {
+          zod: '@kb-labs/quality-contracts#TestsResponseSchema',
         },
       },
     ],

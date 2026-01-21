@@ -220,3 +220,97 @@ export const visualizeFlags = {
 } as const;
 
 export type VisualizeFlags = typeof visualizeFlags;
+
+/**
+ * Flags for quality:check-builds command
+ */
+export const checkBuildsFlags = {
+  package: {
+    type: 'string',
+    description: 'Check builds for specific package',
+    alias: 'p',
+  },
+  timeout: {
+    type: 'number',
+    description: 'Timeout per package in milliseconds',
+    default: 30000,
+  },
+  json: {
+    type: 'boolean',
+    description: 'Output JSON format',
+    default: false,
+  },
+  refresh: {
+    type: 'boolean',
+    description: 'Bypass cache and check fresh',
+    default: false,
+  },
+} as const;
+
+export type CheckBuildsFlags = typeof checkBuildsFlags;
+
+/**
+ * Flags for quality:check-types command
+ */
+export const checkTypesFlags = {
+  package: {
+    type: 'string',
+    description: 'Analyze types for specific package',
+    alias: 'p',
+  },
+  'errors-only': {
+    type: 'boolean',
+    description: 'Show only packages with errors',
+    default: false,
+  },
+  json: {
+    type: 'boolean',
+    description: 'Output JSON format',
+    default: false,
+  },
+  refresh: {
+    type: 'boolean',
+    description: 'Bypass cache and analyze fresh',
+    default: false,
+  },
+} as const;
+
+export type CheckTypesFlags = typeof checkTypesFlags;
+
+/**
+ * Flags for quality:check-tests command
+ */
+export const checkTestsFlags = {
+  package: {
+    type: 'string',
+    description: 'Run tests for specific package',
+    alias: 'p',
+  },
+  timeout: {
+    type: 'number',
+    description: 'Timeout per package in milliseconds',
+    default: 60000,
+  },
+  'with-coverage': {
+    type: 'boolean',
+    description: 'Collect coverage statistics',
+    default: false,
+  },
+  'coverage-only': {
+    type: 'boolean',
+    description: 'Only show existing coverage (skip test execution)',
+    default: false,
+  },
+  json: {
+    type: 'boolean',
+    description: 'Output JSON format',
+    default: false,
+  },
+  refresh: {
+    type: 'boolean',
+    description: 'Bypass cache and run fresh',
+    default: false,
+  },
+} as const;
+
+export type CheckTestsFlags = typeof checkTestsFlags;
