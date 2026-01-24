@@ -20,12 +20,6 @@
       ],
       "@kb-labs/quality-core/*": [
         "packages/quality-core/src/*"
-      ],
-      "@kb-labs/sdk": [
-        "../kb-labs-sdk/packages/sdk/src/index.ts"
-      ],
-      "@kb-labs/sdk/*": [
-        "../kb-labs-sdk/packages/sdk/src/*"
       ]
     }
   }
