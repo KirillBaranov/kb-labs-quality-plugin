@@ -1,10 +1,10 @@
 import { defineConfig } from 'tsup';
-import nodePreset from '@kb-labs/devkit/tsup/node.js';
-import { globbySync } from 'globby';
+import nodePreset from '@kb-labs/devkit/tsup/node';
+import { sync as globbySync } from 'globby';
 
 // Auto-discover all command handlers
 const commandHandlers = globbySync('src/cli/commands/*.ts', {
-  ignore: ['**/*.d.ts'],
+  ignore: ['**/*.d.ts', '**/flags.ts'],
 });
 
 // Auto-discover all REST handlers
@@ -20,7 +20,6 @@ export default defineConfig({
     'src/manifest.ts',
     ...commandHandlers,
     ...restHandlers,
-    'src/utils/dependency-graph.ts',
   ],
   external: [
     '@kb-labs/sdk',
