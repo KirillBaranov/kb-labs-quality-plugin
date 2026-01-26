@@ -1,16 +1,5 @@
 import { defineConfig } from 'tsup';
 import nodePreset from '@kb-labs/devkit/tsup/node';
-import { sync as globbySync } from 'globby';
-
-// Auto-discover all command handlers
-const commandHandlers = globbySync('src/cli/commands/*.ts', {
-  ignore: ['**/*.d.ts', '**/flags.ts'],
-});
-
-// Auto-discover all REST handlers
-const restHandlers = globbySync('src/rest/handlers/*.ts', {
-  ignore: ['**/*.d.ts'],
-});
 
 export default defineConfig({
   ...nodePreset,
@@ -18,8 +7,8 @@ export default defineConfig({
   entry: [
     'src/index.ts',
     'src/manifest.ts',
-    ...commandHandlers,
-    ...restHandlers,
+    'src/cli/commands/**/*.ts',  // Auto-include all CLI commands
+    'src/rest/handlers/**/*.ts', // Auto-include all REST handlers
   ],
   external: [
     '@kb-labs/sdk',
