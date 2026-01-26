@@ -73,17 +73,17 @@ function findPackages(rootDir: string, specificPackage?: string): string[] {
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -207,11 +207,11 @@ async function calculateHealth(rootDir: string, specificPackage?: string): Promi
 
   // Determine grade
   let grade: 'A' | 'B' | 'C' | 'D' | 'F';
-  if (score >= 90) grade = 'A';
-  else if (score >= 80) grade = 'B';
-  else if (score >= 70) grade = 'C';
-  else if (score >= 60) grade = 'D';
-  else grade = 'F';
+  if (score >= 90) {grade = 'A';}
+  else if (score >= 80) {grade = 'B';}
+  else if (score >= 70) {grade = 'C';}
+  else if (score >= 60) {grade = 'D';}
+  else {grade = 'F';}
 
   return {
     score: Math.max(0, score),

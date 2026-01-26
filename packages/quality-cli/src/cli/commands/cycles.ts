@@ -87,7 +87,7 @@ function outputCycles(cycles: string[][], flags: any, ui: any) {
   // Show each cycle
   for (let i = 0; i < cycles.length; i++) {
     const cycle = cycles[i];
-    if (!cycle) continue;
+    if (!cycle) {continue;}
     const cycleItems: string[] = [];
 
     for (let j = 0; j < cycle.length; j++) {

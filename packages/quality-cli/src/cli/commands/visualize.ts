@@ -94,14 +94,14 @@ function outputTree(graph: DependencyGraph, packageName: string, flags: any, ui:
     visited.add(pkg);
 
     const pkgNode = nodes.get(pkg);
-    if (!pkgNode) return;
+    if (!pkgNode) {return;}
 
     treeItems.push(`${prefix}${pkg}`);
 
     const deps = Array.from(pkgNode.deps);
     for (let i = 0; i < deps.length; i++) {
       const dep = deps[i];
-      if (!dep) continue;
+      if (!dep) {continue;}
       const isLast = i === deps.length - 1;
       const newPrefix = prefix + (isLast ? '  └─ ' : '  ├─ ');
       buildTree(dep, depth + 1, newPrefix);

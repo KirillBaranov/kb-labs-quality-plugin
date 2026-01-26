@@ -85,7 +85,7 @@ function outputBuildOrder(result: TopologicalSortResult, flags: any, ui: any) {
 
     for (let i = 0; i < result.layers.length; i++) {
       const layer = result.layers[i];
-      if (!layer) continue;
+      if (!layer) {continue;}
       ui?.write?.(`# Layer ${i + 1} (${layer.length} packages)`);
       for (const pkg of layer) {
         ui?.write?.(`pnpm --filter "${pkg}" run build`);
@@ -103,7 +103,7 @@ function outputBuildOrder(result: TopologicalSortResult, flags: any, ui: any) {
     const layerItems: string[] = [];
     for (let i = 0; i < result.layers.length; i++) {
       const layer = result.layers[i];
-      if (!layer) continue;
+      if (!layer) {continue;}
       layerItems.push(`Layer ${i + 1}: ${layer.length} packages (can build in parallel)`);
       for (const pkg of layer) {
         layerItems.push(`  • ${pkg}`);
@@ -145,7 +145,7 @@ function outputCircularDependencies(cycles: string[][], ui: any) {
 
   for (let i = 0; i < cycles.length; i++) {
     const cycle = cycles[i];
-    if (!cycle) continue;
+    if (!cycle) {continue;}
     sections.push({
       header: `Cycle ${i + 1}`,
       items: cycle.map((pkg, idx) => {

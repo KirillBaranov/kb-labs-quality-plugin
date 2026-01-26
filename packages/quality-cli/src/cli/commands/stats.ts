@@ -84,17 +84,17 @@ function findPackages(rootDir: string): string[] {
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -178,7 +178,7 @@ async function collectStats(rootDir: string): Promise<StatsResult> {
     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
     const packageName = packageJson.name;
 
-    if (!packageName || !packageName.startsWith('@kb-labs/')) continue;
+    if (!packageName || !packageName.startsWith('@kb-labs/')) {continue;}
 
     stats.overview.totalPackages++;
 
@@ -277,11 +277,11 @@ function calculateHealthScore(stats: StatsResult) {
 
   // Determine grade
   let grade: 'A' | 'B' | 'C' | 'D' | 'F';
-  if (score >= 90) grade = 'A';
-  else if (score >= 80) grade = 'B';
-  else if (score >= 70) grade = 'C';
-  else if (score >= 60) grade = 'D';
-  else grade = 'F';
+  if (score >= 90) {grade = 'A';}
+  else if (score >= 80) {grade = 'B';}
+  else if (score >= 70) {grade = 'C';}
+  else if (score >= 60) {grade = 'D';}
+  else {grade = 'F';}
 
   return {
     score,
@@ -387,7 +387,7 @@ function outputMarkdown(stats: StatsResult) {
  * Format bytes to human-readable string
  */
 function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {return '0 B';}
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));

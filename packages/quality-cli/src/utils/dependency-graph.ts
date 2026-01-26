@@ -42,17 +42,17 @@ export function buildDependencyGraph(rootDir: string): DependencyGraph {
 
   // First pass: collect all workspace packages
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -69,17 +69,17 @@ export function buildDependencyGraph(rootDir: string): DependencyGraph {
 
   // Second pass: build dependency graph
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -87,7 +87,7 @@ export function buildDependencyGraph(rootDir: string): DependencyGraph {
         const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
         const packageName = pkgJson.name;
 
-        if (!packageName) continue;
+        if (!packageName) {continue;}
 
         const deps = new Set<string>();
         const devDeps = new Set<string>();
@@ -167,7 +167,7 @@ export function topologicalSort(graph: DependencyGraph): TopologicalSortResult {
 
     for (const name of layer) {
       const node = nodes.get(name);
-      if (!node) continue;
+      if (!node) {continue;}
 
       for (const dep of node.deps) {
         if (nodes.has(dep)) {
@@ -216,11 +216,11 @@ export function findCircularDependencies(
     path.push(node);
 
     const nodeData = nodes.get(node);
-    if (!nodeData) return;
+    if (!nodeData) {return;}
 
     for (const dep of nodeData.deps) {
-      if (!nodes.has(dep)) continue;
-      if (subset && !subset.has(dep)) continue;
+      if (!nodes.has(dep)) {continue;}
+      if (subset && !subset.has(dep)) {continue;}
 
       if (!visited.has(dep)) {
         dfs(dep, [...path]);
@@ -265,7 +265,7 @@ export function getBuildOrderForPackage(
     allDeps.add(current);
 
     const node = nodes.get(current);
-    if (!node) continue;
+    if (!node) {continue;}
 
     for (const dep of node.deps) {
       if (!allDeps.has(dep) && nodes.has(dep)) {

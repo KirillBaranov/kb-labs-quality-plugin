@@ -133,17 +133,17 @@ function findPackages(rootDir: string): Array<{ name: string; path: string; json
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -218,7 +218,7 @@ async function alignDuplicateVersions(
     };
 
     for (const [dep, version] of Object.entries(deps)) {
-      if (dep.startsWith('@kb-labs/')) continue; // Skip workspace deps
+      if (dep.startsWith('@kb-labs/')) {continue;} // Skip workspace deps
 
       if (!depVersions.has(dep)) {
         depVersions.set(dep, new Map());
@@ -234,7 +234,7 @@ async function alignDuplicateVersions(
 
   // Find duplicates and determine most common version
   for (const [dep, versions] of depVersions.entries()) {
-    if (versions.size <= 1) continue;
+    if (versions.size <= 1) {continue;}
 
     // Find most common version
     const versionCounts = Array.from(versions.entries()).map(([ver, pkgs]) => ({
@@ -245,7 +245,7 @@ async function alignDuplicateVersions(
 
     versionCounts.sort((a, b) => b.count - a.count);
     const targetVersion = versionCounts[0]?.version;
-    if (!targetVersion) continue;
+    if (!targetVersion) {continue;}
 
     // Align all packages to target version
     for (const { version, packages: pkgNames } of versionCounts.slice(1)) {
@@ -260,7 +260,7 @@ async function alignDuplicateVersions(
         // Apply changes to package.json files
         for (const pkgName of pkgNames) {
           const pkg = packages.find(p => p.name === pkgName);
-          if (!pkg) continue;
+          if (!pkg) {continue;}
 
           if (pkg.json.dependencies?.[dep]) {
             pkg.json.dependencies[dep] = targetVersion;
@@ -300,7 +300,7 @@ async function addMissingWorkspaceDeps(
     const packageDir = path.dirname(pkg.path);
     const srcDir = path.join(packageDir, 'src');
 
-    if (!fs.existsSync(srcDir)) continue;
+    if (!fs.existsSync(srcDir)) {continue;}
 
     // Scan imports
     const imports = scanImports(srcDir);
@@ -344,7 +344,7 @@ async function removeUnusedDeps(
     const packageDir = path.dirname(pkg.path);
     const srcDir = path.join(packageDir, 'src');
 
-    if (!fs.existsSync(srcDir)) continue;
+    if (!fs.existsSync(srcDir)) {continue;}
 
     // Scan imports
     const imports = new Set(scanImports(srcDir));
@@ -356,7 +356,7 @@ async function removeUnusedDeps(
 
     for (const dep of Object.keys(deps)) {
       // Skip protected dependencies
-      if (isProtectedDep(dep)) continue;
+      if (isProtectedDep(dep)) {continue;}
 
       // Check if dependency is used
       if (!imports.has(dep)) {
@@ -399,7 +399,7 @@ function scanImports(dir: string): string[] {
         let match;
         while ((match = importRegex.exec(content)) !== null) {
           const imp = match[1];
-          if (!imp) continue;
+          if (!imp) {continue;}
           // Extract package name (handle scoped packages)
           const pkgName = imp.startsWith('@') ? imp.split('/').slice(0, 2).join('/') : imp.split('/')[0];
           if (pkgName) {
