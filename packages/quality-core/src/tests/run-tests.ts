@@ -68,17 +68,17 @@ function findPackagesWithTests(rootDir: string, filter?: string): PackageWithTes
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -285,9 +285,9 @@ export async function runTests(
       // Parse test counts
       if (testResult.output) {
         const counts = parseTestOutput(testResult.output);
-        if (counts.total) result.summary.totalTests += counts.total;
-        if (counts.passed) result.summary.passedTests += counts.passed;
-        if (counts.failed) result.summary.failedTests += counts.failed || 0;
+        if (counts.total) {result.summary.totalTests += counts.total;}
+        if (counts.passed) {result.summary.passedTests += counts.passed;}
+        if (counts.failed) {result.summary.failedTests += counts.failed || 0;}
       }
     } else {
       result.failing++;
@@ -303,9 +303,9 @@ export async function runTests(
         totalTests: counts.total,
       });
 
-      if (counts.total) result.summary.totalTests += counts.total;
-      if (counts.passed) result.summary.passedTests += counts.passed || 0;
-      if (counts.failed) result.summary.failedTests += counts.failed;
+      if (counts.total) {result.summary.totalTests += counts.total;}
+      if (counts.passed) {result.summary.passedTests += counts.passed || 0;}
+      if (counts.failed) {result.summary.failedTests += counts.failed;}
     }
 
     // Collect coverage if requested

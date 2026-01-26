@@ -5,7 +5,7 @@
 
 import { readFile, stat, access } from 'node:fs/promises';
 import { join } from 'node:path';
-import { globby } from 'globby';
+import globby from 'globby';
 import { buildDependencyGraph } from '../graph/index.js';
 
 export interface StalePackage {
@@ -36,7 +36,7 @@ export interface StaleAnalysis {
  * Get latest modification time from a list of files
  */
 async function getLatestModTime(files: string[]): Promise<Date | null> {
-  if (files.length === 0) return null;
+  if (files.length === 0) {return null;}
 
   let latest: Date | null = null;
 
@@ -188,16 +188,16 @@ function getMaxDepth(
   packageName: string,
   visited = new Set<string>()
 ): number {
-  if (visited.has(packageName)) return 0;
+  if (visited.has(packageName)) {return 0;}
   visited.add(packageName);
 
   const node = graph.nodes.get(packageName);
-  if (!node || node.dependents.size === 0) return 0;
+  if (!node || node.dependents.size === 0) {return 0;}
 
   let maxDepth = 0;
   for (const dependent of node.dependents) {
     const depth = 1 + getMaxDepth(graph, dependent, new Set(visited));
-    if (depth > maxDepth) maxDepth = depth;
+    if (depth > maxDepth) {maxDepth = depth;}
   }
 
   return maxDepth;

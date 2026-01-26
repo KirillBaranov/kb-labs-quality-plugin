@@ -6,7 +6,7 @@
 
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { globby } from 'globby';
+import globby from 'globby';
 
 export interface HealthResult {
   score: number;
@@ -46,7 +46,7 @@ export async function checkDuplicateDependencies(rootDir: string): Promise<Healt
       };
 
       for (const [name, version] of Object.entries(allDeps)) {
-        if (typeof version !== 'string') continue;
+        if (typeof version !== 'string') {continue;}
 
         if (!depVersions.has(name)) {
           depVersions.set(name, new Set());
@@ -63,7 +63,7 @@ export async function checkDuplicateDependencies(rootDir: string): Promise<Healt
     ([, versions]) => versions.size > 1
   );
 
-  if (duplicates.length === 0) return null;
+  if (duplicates.length === 0) {return null;}
 
   const penalty = Math.min(duplicates.length * 2, 30); // Max -30 points
 
@@ -112,7 +112,7 @@ export async function checkMissingReadmes(rootDir: string): Promise<HealthIssue 
     }
   }
 
-  if (missingCount === 0) return null;
+  if (missingCount === 0) {return null;}
 
   const penalty = Math.min(missingCount, 15); // Max -15 points
 
@@ -139,10 +139,10 @@ export function calculateHealthScore(issues: HealthIssue[]): number {
  * Convert score to letter grade
  */
 export function scoreToGrade(score: number): 'A' | 'B' | 'C' | 'D' | 'F' {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
+  if (score >= 90) {return 'A';}
+  if (score >= 80) {return 'B';}
+  if (score >= 70) {return 'C';}
+  if (score >= 60) {return 'D';}
   return 'F';
 }
 
@@ -158,8 +158,8 @@ export async function calculateHealth(rootDir: string): Promise<HealthResult> {
     checkMissingReadmes(rootDir),
   ]);
 
-  if (duplicatesIssue) issues.push(duplicatesIssue);
-  if (readmesIssue) issues.push(readmesIssue);
+  if (duplicatesIssue) {issues.push(duplicatesIssue);}
+  if (readmesIssue) {issues.push(readmesIssue);}
 
   const score = calculateHealthScore(issues);
   const grade = scoreToGrade(score);

@@ -50,17 +50,17 @@ function findPackagesWithTsConfig(rootDir: string, filter?: string): PackageWith
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
       const tsconfigPath = path.join(packagesDir, pkgDir.name, 'tsconfig.json');
@@ -91,7 +91,7 @@ function findPackagesWithTsConfig(rootDir: string, filter?: string): PackageWith
 function createProgram(packageDir: string, tsconfigPath: string): ts.Program | null {
   try {
     const configFile = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
-    if (configFile.error) return null;
+    if (configFile.error) {return null;}
 
     const parsedConfig = ts.parseJsonConfigFileContent(
       configFile.config,
@@ -99,7 +99,7 @@ function createProgram(packageDir: string, tsconfigPath: string): ts.Program | n
       packageDir
     );
 
-    if (parsedConfig.errors.length > 0) return null;
+    if (parsedConfig.errors.length > 0) {return null;}
 
     return ts.createProgram({
       rootNames: parsedConfig.fileNames,
@@ -120,7 +120,7 @@ function analyzePackageTypes(program: ts.Program): { errors: number; warnings: n
   let warnings = 0;
 
   for (const diagnostic of diagnostics) {
-    if (!diagnostic.file) continue;
+    if (!diagnostic.file) {continue;}
 
     if (diagnostic.category === ts.DiagnosticCategory.Error) {
       errors++;

@@ -6,7 +6,7 @@
 
 import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { globby } from 'globby';
+import globby from 'globby';
 
 export interface MonorepoStats {
   packages: number;
@@ -80,7 +80,7 @@ export async function calculateSize(rootDir: string): Promise<number> {
  * Format bytes to human-readable string
  */
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {return '0 B';}
 
   const units = ['B', 'KB', 'MB', 'GB'];
   const k = 1024;

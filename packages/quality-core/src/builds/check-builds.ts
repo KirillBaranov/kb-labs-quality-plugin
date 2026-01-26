@@ -47,17 +47,17 @@ function findPackagesWithBuildScript(rootDir: string, filter?: string): string[]
   const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) continue;
+    if (!entry.isDirectory() || !entry.name.startsWith('kb-labs-')) {continue;}
 
     const repoPath = path.join(rootDir, entry.name);
     const packagesDir = path.join(repoPath, 'packages');
 
-    if (!fs.existsSync(packagesDir)) continue;
+    if (!fs.existsSync(packagesDir)) {continue;}
 
     const packageDirs = fs.readdirSync(packagesDir, { withFileTypes: true });
 
     for (const pkgDir of packageDirs) {
-      if (!pkgDir.isDirectory()) continue;
+      if (!pkgDir.isDirectory()) {continue;}
 
       const packageJsonPath = path.join(packagesDir, pkgDir.name, 'package.json');
 
@@ -65,7 +65,7 @@ function findPackagesWithBuildScript(rootDir: string, filter?: string): string[]
         const pkgJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
         // Skip if no build script
-        if (!pkgJson.scripts?.build) continue;
+        if (!pkgJson.scripts?.build) {continue;}
 
         // Skip if filter doesn't match
         if (filter && !pkgJson.name.includes(filter) && !pkgDir.name.includes(filter)) {

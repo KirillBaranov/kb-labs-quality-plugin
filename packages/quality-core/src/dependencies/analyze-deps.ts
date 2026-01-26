@@ -6,7 +6,7 @@
 
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { globby } from 'globby';
+import globby from 'globby';
 
 export interface DependencyAnalysis {
   duplicates: DuplicateDependency[];
@@ -64,7 +64,7 @@ export async function analyzeDuplicateDependencies(
       };
 
       for (const [name, version] of Object.entries(allDeps)) {
-        if (typeof version !== 'string') continue;
+        if (typeof version !== 'string') {continue;}
 
         if (!depVersionMap.has(name)) {
           depVersionMap.set(name, new Map());
@@ -86,7 +86,7 @@ export async function analyzeDuplicateDependencies(
   const duplicates: DuplicateDependency[] = [];
 
   for (const [name, versionMap] of depVersionMap) {
-    if (versionMap.size <= 1) continue;
+    if (versionMap.size <= 1) {continue;}
 
     const versions: VersionInfo[] = Array.from(versionMap.entries()).map(
       ([version, packages]) => ({
@@ -152,7 +152,7 @@ export async function analyzeUnusedDependencies(
 
       // Read all source content
       const sourceContents = await Promise.all(
-        sourceFiles.map(async (file) => {
+        sourceFiles.map(async (file: string) => {
           try {
             return await readFile(file, 'utf-8');
           } catch {
