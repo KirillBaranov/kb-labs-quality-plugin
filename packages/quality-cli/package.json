@@ -34,13 +34,16 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@kb-labs/sdk": "link:../../../kb-labs-sdk/packages/sdk",
+    "@kb-labs/plugin-contracts": "workspace:*",
     "@kb-labs/quality-contracts": "workspace:*",
-    "@kb-labs/quality-core": "workspace:*"
+    "@kb-labs/quality-core": "workspace:*",
+    "@kb-labs/sdk": "link:../../../kb-labs-sdk/packages/sdk",
+    "react": "latest",
+    "zod": "latest"
   },
   "devDependencies": {
     "@kb-labs/devkit": "link:../../../kb-labs-devkit",
