@@ -24,13 +24,11 @@ export default defineHandler({
   ): Promise<TestsResponse> {
     const { package: packageFilter, timeout, withCoverage, coverageOnly } = input.query ?? {};
 
-    const result = await runTests(ctx.cwd, {
+    return runTests(ctx.cwd, {
       packageFilter,
       timeout: timeout || 60000,
       withCoverage: withCoverage ?? false,
       coverageOnly: coverageOnly ?? false,
     });
-
-    return result;
   },
 });

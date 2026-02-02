@@ -2,13 +2,13 @@
 import { defineConfig } from "tsup";
 import nodePreset from "@kb-labs/devkit/tsup/node.js";
 import { globbySync } from "globby";
-var commandHandlers = globbySync("src/cli/commands/*.ts", {
+const commandHandlers = globbySync("src/cli/commands/*.ts", {
   ignore: ["**/*.d.ts"]
 });
-var restHandlers = globbySync("src/rest/handlers/*.ts", {
+const restHandlers = globbySync("src/rest/handlers/*.ts", {
   ignore: ["**/*.d.ts"]
 });
-var tsup_config_default = defineConfig({
+const tsup_config_default = defineConfig({
   ...nodePreset,
   tsconfig: "tsconfig.build.json",
   entry: [

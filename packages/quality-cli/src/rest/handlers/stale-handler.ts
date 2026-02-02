@@ -8,8 +8,6 @@
 import { defineHandler, type PluginContextV3, type RestInput } from '@kb-labs/sdk';
 import {
   analyzeStalePackages,
-  type StalePackage as StalePackageType,
-  type StaleChain as StaleChainType,
 } from '@kb-labs/quality-core/stale';
 
 export type StaleRequest = {

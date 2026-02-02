@@ -22,11 +22,9 @@ export default defineHandler({
   ): Promise<BuildsResponse> {
     const { package: packageFilter, timeout } = input.query ?? {};
 
-    const result = await checkBuilds(ctx.cwd, {
+    return checkBuilds(ctx.cwd, {
       packageFilter,
       timeout: timeout || 30000,
     });
-
-    return result;
   },
 });

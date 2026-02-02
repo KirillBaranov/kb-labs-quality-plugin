@@ -22,11 +22,9 @@ export default defineHandler({
   ): Promise<TypesResponse> {
     const { package: packageFilter, errorsOnly } = input.query ?? {};
 
-    const result = await analyzeTypes(ctx.cwd, {
+    return analyzeTypes(ctx.cwd, {
       packageFilter,
       errorsOnly: errorsOnly ?? false,
     });
-
-    return result;
   },
 });

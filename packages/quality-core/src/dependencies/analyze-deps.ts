@@ -154,7 +154,7 @@ export async function analyzeUnusedDependencies(
       const sourceContents = await Promise.all(
         sourceFiles.map(async (file: string) => {
           try {
-            return await readFile(file, 'utf-8');
+            return readFile(file, 'utf-8');
           } catch {
             return '';
           }

@@ -5,7 +5,6 @@
  */
 
 import { readFile, stat } from 'node:fs/promises';
-import { join } from 'node:path';
 import globby from 'globby';
 
 export interface MonorepoStats {
