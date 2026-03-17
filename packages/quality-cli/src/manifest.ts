@@ -23,6 +23,7 @@ import {
   checkBuildsFlags,
   checkTypesFlags,
   checkTestsFlags,
+  deadCodeFlags,
 } from './cli/commands/flags.js';
 
 /**
@@ -322,6 +323,36 @@ export const manifest = {
         ],
 
         permissions: heavyOperationsPermissions,
+      },
+
+      // ======================================================================
+      // quality:dead-code - Dead code file detection
+      // ======================================================================
+      {
+        id: 'quality:dead-code',
+        group: 'quality',
+        describe: 'Detect dead (unreachable) source files',
+        longDescription:
+          'Analyzes import graph to find source files not reachable from any entry point ' +
+          '(package.json, tsup.config.ts, manifest.ts). Supports automated removal with ' +
+          'backup and restore capabilities. Zero false positives by design.',
+
+        handler: './cli/commands/dead-code.js#default',
+        handlerPath: './cli/commands/dead-code.js',
+
+        flags: defineCommandFlags(deadCodeFlags),
+
+        examples: [
+          'kb quality:dead-code',
+          'kb quality:dead-code --package @kb-labs/core',
+          'kb quality:dead-code --auto-remove --dry-run',
+          'kb quality:dead-code --auto-remove',
+          'kb quality:dead-code --list-backups',
+          'kb quality:dead-code --restore 2026-02-15T10-30-00',
+          'kb quality:dead-code --json',
+        ],
+
+        permissions: pluginPermissions,
       },
     ],
   },

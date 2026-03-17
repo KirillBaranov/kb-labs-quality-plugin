@@ -43,5 +43,16 @@ export {
 } from './routes.js';
 export type { QualityRoute } from './routes.js';
 
+// Dead code types
+export type {
+  AliveReason,
+  DeadFile,
+  PackageDeadCodeResult,
+  DeadCodeResult,
+  DeadCodeOptions,
+  DeadCodeBackupManifest,
+  DeadCodeRemovalResult,
+} from './types/dead-code.js';
+
 // REST API types and schemas
 export * from './types/rest-api.js';

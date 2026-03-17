@@ -13,3 +13,4 @@ export * from './dependencies/index.js';
 export * from './builds/index.js';
 export * from './types/index.js';
 export * from './tests/index.js';
+export * from './dead-code/index.js';

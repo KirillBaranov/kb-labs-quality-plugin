@@ -314,3 +314,51 @@ export const checkTestsFlags = {
 } as const;
 
 export type CheckTestsFlags = typeof checkTestsFlags;
+
+/**
+ * Flags for quality:dead-code command
+ */
+export const deadCodeFlags = {
+  package: {
+    type: 'string',
+    description: 'Scan specific package only',
+    alias: 'p',
+  },
+  json: {
+    type: 'boolean',
+    description: 'Output JSON format',
+    default: false,
+  },
+  verbose: {
+    type: 'boolean',
+    description: 'Show entry points and alive reasons',
+    default: false,
+    alias: 'v',
+  },
+  'auto-remove': {
+    type: 'boolean',
+    description: 'Remove dead files (creates backup first)',
+    default: false,
+  },
+  'dry-run': {
+    type: 'boolean',
+    description: 'Show what would be removed without actually deleting',
+    default: false,
+  },
+  restore: {
+    type: 'string',
+    description: 'Restore files from backup ID',
+  },
+  'list-backups': {
+    type: 'boolean',
+    description: 'List available backups',
+    default: false,
+  },
+  refresh: {
+    type: 'boolean',
+    description: 'Bypass cache and rescan',
+    default: false,
+  },
+} as const;
+
+export type DeadCodeFlags = typeof deadCodeFlags;

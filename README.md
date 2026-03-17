@@ -1,112 +1,306 @@
-# Quality Plugin
+# Standard Configuration Templates
 
-Monorepo quality analysis, health checks, and automated fixes for KB Labs platform.
+This directory contains canonical configuration templates for all `@kb-labs` packages.
 
-## Commands
+## 📋 Available Templates
 
-### 📊 Statistics & Health
+### Core Configs (All Packages)
 
-**`quality:stats`** - Monorepo statistics and health score
+| File | Purpose | Required | Customizable |
+|------|---------|----------|--------------|
+| **eslint.config.js** | Linting rules | ✅ Yes | ⚠️ Minimal |
+| **tsconfig.json** | TypeScript IDE config | ✅ Yes | ❌ No |
+| **tsconfig.build.json** | TypeScript build config | ✅ Yes | ❌ No |
+
+### Tsup Configs (Choose ONE based on package type)
+
+| Template | Package Type | Use Cases |
+|----------|--------------|-----------|
+| **tsup.config.ts** | 📦 **Library** (default) | Most packages, importable libraries |
+| **tsup.config.bin.ts** | 🔧 **Binary** | Standalone executables, CLI bins |
+| **tsup.config.cli.ts** | ⌨️ **CLI** | CLI packages with commands |
+| **tsup.config.dual.ts** | 📦🔧 **Library + Binary** | Packages with both API and bin |
+
+### Package.json Examples
+
+| Template | Purpose |
+|----------|---------|
+| **package.json.lib** | Library package example |
+| **package.json.bin** | Binary package example |
+
+## 🎯 Philosophy
+
+**Convention over Configuration**
+
+All `@kb-labs` packages MUST use these exact templates with minimal customization. This ensures:
+
+- ✅ Consistent build output across all packages
+- ✅ Predictable dependency resolution
+- ✅ Unified linting standards
+- ✅ Easy maintenance and upgrades
+
+## 📦 Usage
+
+### For New Packages
+
+#### Step 1: Choose Package Type
+
+**Library Package** (most common):
 ```bash
-kb quality:stats                 # View statistics
-kb quality:stats --health        # Include health score
-kb quality:stats --json          # JSON output
-kb quality:stats --md            # Markdown table
+cp kb-labs-devkit/templates/configs/tsup.config.ts your-package/
+cp kb-labs-devkit/templates/configs/eslint.config.js your-package/
+cp kb-labs-devkit/templates/configs/tsconfig*.json your-package/
+cp kb-labs-devkit/templates/configs/package.json.lib your-package/package.json
 ```
 
-**`quality:health`** - Comprehensive health check with grading (A-F)
+**Binary Package** (standalone executables):
 ```bash
-kb quality:health                          # Full health check
-kb quality:health --detailed               # Detailed breakdown
-kb quality:health -p @kb-labs/core         # Specific package
-kb quality:health --json                   # JSON output
+cp kb-labs-devkit/templates/configs/tsup.config.bin.ts your-package/tsup.config.ts
+cp kb-labs-devkit/templates/configs/eslint.config.js your-package/
+cp kb-labs-devkit/templates/configs/tsconfig*.json your-package/
+cp kb-labs-devkit/templates/configs/package.json.bin your-package/package.json
 ```
 
-### 🔧 Dependency Management
-
-**`quality:fix-deps`** - Auto-fix dependency issues
+**CLI Package** (command handlers):
 ```bash
-kb quality:fix-deps --stats                # Show statistics
-kb quality:fix-deps --remove-unused --dry-run  # Preview unused deps removal
-kb quality:fix-deps --align-versions       # Align duplicate versions
-kb quality:fix-deps --all --dry-run        # Preview all fixes
-kb quality:fix-deps --all                  # Apply all fixes
+cp kb-labs-devkit/templates/configs/tsup.config.cli.ts your-package/tsup.config.ts
+cp kb-labs-devkit/templates/configs/eslint.config.js your-package/
+cp kb-labs-devkit/templates/configs/tsconfig*.json your-package/
+cp kb-labs-devkit/templates/configs/package.json.lib your-package/package.json
 ```
 
-### 📦 Build Order & Dependencies
-
-**`quality:build-order`** - Calculate build order with topological sort
+**Dual Package** (library + binary):
 ```bash
-kb quality:build-order                     # Show sequential order
-kb quality:build-order --layers            # Show parallel build layers
-kb quality:build-order -p @kb-labs/core    # For specific package
-kb quality:build-order --script > build.sh # Generate bash script
+cp kb-labs-devkit/templates/configs/tsup.config.dual.ts your-package/tsup.config.ts
+cp kb-labs-devkit/templates/configs/eslint.config.js your-package/
+cp kb-labs-devkit/templates/configs/tsconfig*.json your-package/
+cp kb-labs-devkit/templates/configs/package.json.lib your-package/package.json
+# Then add "bin" field to package.json
 ```
 
-**`quality:cycles`** - Detect circular dependencies
+#### Step 2: Customize Package Name
 ```bash
-kb quality:cycles                          # Find all cycles
-kb quality:cycles --json                   # JSON output
+# Edit package.json and update name, description
 ```
 
-**`quality:visualize`** - Visualize dependency graph
+### For Existing Packages
+
 ```bash
-kb quality:visualize --stats                        # Graph statistics
-kb quality:visualize --tree -p @kb-labs/core       # Dependency tree
-kb quality:visualize --reverse -p @kb-labs/sdk     # Who depends on this
-kb quality:visualize --impact -p @kb-labs/core     # Impact analysis
-kb quality:visualize --dot > deps.dot              # DOT for graphviz
+# Check for drift
+npx kb-devkit-check-configs
+
+# Auto-fix drift
+npx kb-devkit-check-configs --fix
 ```
 
-## Features
+## 🔧 Customization Rules
 
-- ✅ **Health Scoring**: A-F grade based on dependency health, structure, and types
-- ✅ **Dependency Analysis**: Duplicates, unused, missing workspace dependencies
-- ✅ **Auto-Fixes**: Remove unused, add missing, align versions (with --dry-run)
-- ✅ **Build Order**: Topological sort with parallel build layers
-- ✅ **Circular Detection**: DFS-based cycle detection with recommendations
-- ✅ **Dependency Graph**: Tree view, reverse deps, impact analysis, DOT export
-- ✅ **Caching**: 5-minute cache for expensive operations
-- ✅ **Analytics**: Track command usage and health trends
+### tsup.config.ts
 
-## Architecture
+**Allowed customizations:**
 
-### Packages
-
-- **quality-cli**: CLI commands and handlers
-- **quality-contracts**: Type-safe contracts, schemas, constants
-
-### Key Modules
-
-- **dependency-graph.ts**: Topological sort, cycle detection, impact analysis
-- **flags.ts**: Centralized flag definitions (DRY)
-- **stats.ts**, **health.ts**, **fix-deps.ts**: Core functionality
-- **build-order.ts**, **cycles.ts**, **visualize.ts**: Dependency analysis
-
-### Build System
-
-Uses `globby` for automatic command handler discovery:
 ```typescript
-// tsup.config.ts auto-discovers all src/cli/commands/*.ts
-const commandHandlers = globbySync('src/cli/commands/*.ts');
+export default defineConfig({
+  ...nodePreset,
+  tsconfig: 'tsconfig.build.json', // ✅ Always required
+
+  // ✅ OK: Multiple entry points
+  entry: ['src/index.ts', 'src/cli.ts'],
+
+  // ✅ OK: Extra external deps (if really needed)
+  external: ['special-native-module'],
+
+  dts: true, // ✅ Always required
+});
 ```
 
-## Development
+**NOT allowed:**
+
+```typescript
+// ❌ WRONG: Don't override preset settings
+export default defineConfig({
+  format: ['esm'],        // Already in preset!
+  target: 'es2022',       // Already in preset!
+  sourcemap: true,        // Already in preset!
+  // ...
+});
+
+// ❌ WRONG: Don't disable types
+dts: false,
+
+// ❌ WRONG: Don't duplicate external deps
+external: [
+  '@kb-labs/core',  // Already in preset!
+  '@kb-labs/cli',   // Already in preset!
+],
+```
+
+### eslint.config.js
+
+**Allowed customizations:**
+
+```javascript
+export default [
+  ...nodePreset,
+  {
+    // ✅ OK: Project-specific ignores only
+    ignores: ['**/*.generated.ts']
+  }
+];
+```
+
+**NOT allowed:**
+
+```javascript
+// ❌ WRONG: Don't duplicate preset ignores
+export default [
+  ...nodePreset,
+  {
+    ignores: [
+      '**/dist/**',        // Already in preset!
+      '**/node_modules/**', // Already in preset!
+    ]
+  }
+];
+```
+
+### tsconfig.json & tsconfig.build.json
+
+**NOT customizable!**
+
+These files MUST remain identical to templates. All TypeScript configuration is standardized in DevKit presets.
+
+```json
+// ❌ WRONG: Don't override extends
+{
+  "extends": "./my-custom-base.json"
+}
+
+// ❌ WRONG: Don't add compilerOptions
+{
+  "extends": "@kb-labs/devkit/tsconfig/node.json",
+  "compilerOptions": {
+    "strict": false  // Don't override preset!
+  }
+}
+```
+
+## 🔍 Drift Detection
+
+DevKit automatically detects configuration drift:
 
 ```bash
-# Build
-pnpm run build
+# Check all packages
+npx kb-devkit-check-configs
 
-# Watch mode
-pnpm run dev
+# Check specific package
+npx kb-devkit-check-configs --package=@kb-labs/core
 
-# Type check
-pnpm run type-check
+# Auto-fix (creates backup)
+npx kb-devkit-check-configs --fix
 
-# Test
-pnpm run test
+# CI mode (fail on drift)
+npx kb-devkit-check-configs --ci
 ```
 
-## License
+### Drift Detection Rules
 
-MIT
+| Issue | Severity | Auto-fix |
+|-------|----------|----------|
+| Missing `dts: true` | 🔴 Error | ✅ Yes |
+| Using `dts: false` | 🔴 Error | ✅ Yes |
+| Not using `nodePreset` | 🔴 Error | ⚠️ Manual |
+| Duplicate `external` | 🟡 Warning | ✅ Yes |
+| Duplicate `ignores` | 🟡 Warning | ✅ Yes |
+| Missing templates | 🔴 Error | ✅ Yes |
+| Modified templates | 🔴 Error | ⚠️ Manual |
+
+## 📚 Examples
+
+### ✅ Good Example (Minimal Package)
+
+```typescript
+// tsup.config.ts
+import { defineConfig } from 'tsup';
+import nodePreset from '@kb-labs/devkit/tsup/node.js';
+
+export default defineConfig({
+  ...nodePreset,
+  tsconfig: 'tsconfig.build.json',
+  entry: ['src/index.ts'],
+  dts: true,
+});
+```
+
+### ✅ Good Example (CLI Package with Multiple Entries)
+
+```typescript
+// tsup.config.ts
+import { defineConfig } from 'tsup';
+import nodePreset from '@kb-labs/devkit/tsup/node.js';
+
+export default defineConfig({
+  ...nodePreset,
+  tsconfig: 'tsconfig.build.json',
+  entry: [
+    'src/index.ts',
+    'src/cli/index.ts',
+    'src/cli/commands/build.ts',
+    'src/cli/commands/test.ts',
+  ],
+  dts: true,
+});
+```
+
+### ❌ Bad Example (Over-configured)
+
+```typescript
+// tsup.config.ts
+import { defineConfig } from 'tsup';
+
+// ❌ Not using preset!
+export default defineConfig({
+  format: ['esm'],
+  target: 'es2022',
+  sourcemap: true,
+  clean: true,
+  dts: true,
+  entry: ['src/index.ts'],
+  external: [/^@kb-labs\/.*/],  // Manual external
+});
+```
+
+## 🚀 Migration Guide
+
+### From Custom Config to Standard Template
+
+1. **Backup your current config**
+   ```bash
+   cp tsup.config.ts tsup.config.ts.backup
+   ```
+
+2. **Copy standard template**
+   ```bash
+   cp kb-labs-devkit/templates/configs/tsup.config.ts .
+   ```
+
+3. **Migrate customizations** (only if needed)
+   - Compare your backup with template
+   - Extract only truly necessary customizations
+   - Add them with comments explaining why
+
+4. **Test build**
+   ```bash
+   pnpm run build
+   ```
+
+5. **Verify types**
+   ```bash
+   npx kb-devkit-check-types
+   ```
+
+## 🔗 Related
+
+- [DevKit README](../../README.md)
+- [DevKit Usage Guide](../../USAGE_GUIDE.md)
+- [ADR-0009: Unified Build Convention](../../docs/adr/0009-unified-build-convention.md)

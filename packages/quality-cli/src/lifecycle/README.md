@@ -20,7 +20,7 @@ Only `setup.ts` is currently implemented. Other hooks are planned for future.
 
 ## Setup Hook
 
-Runs when user installs/initializes the plugin: `kb plugins install template`
+Runs when user installs/initializes the plugin: `kb marketplace install template`
 
 ```typescript
 // lifecycle/setup.ts

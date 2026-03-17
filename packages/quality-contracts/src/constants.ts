@@ -28,6 +28,7 @@ export const CACHE_KEYS = {
   BUILDS: 'quality:builds',
   TYPE_ANALYSIS: 'quality:type-analysis',
   TESTS: 'quality:tests',
+  DEAD_CODE: 'quality:dead-code',
 } as const;
 
 /**
@@ -42,6 +43,7 @@ export const DEFAULT_TIMEOUTS = {
   TYPES_AUDIT: 180000, // 3 min
   FIX_DEPS: 300000, // 5 min
   CI: 600000, // 10 min
+  DEAD_CODE: 120000, // 2 min
 } as const;
 
 /**

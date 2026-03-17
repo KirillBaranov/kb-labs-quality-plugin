@@ -15,6 +15,7 @@ export default defineConfig({
     'src/builds/index.ts',
     'src/types/index.ts',
     'src/tests/index.ts',
+    'src/dead-code/index.ts',
   ],
   external: [
     '@kb-labs/sdk',

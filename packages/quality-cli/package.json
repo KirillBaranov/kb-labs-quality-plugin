@@ -41,13 +41,13 @@
     "@kb-labs/plugin-contracts": "workspace:*",
     "@kb-labs/quality-contracts": "workspace:*",
     "@kb-labs/quality-core": "workspace:*",
-    "@kb-labs/sdk": "link:../../../kb-labs-sdk/packages/sdk",
+    "@kb-labs/sdk": "workspace:*",
     "react": "latest",
     "zod": "latest"
   },
   "devDependencies": {
-    "@kb-labs/devkit": "link:../../../kb-labs-devkit",
-    "@kb-labs/plugin-runtime": "link:../../../kb-labs-plugin/packages/plugin-runtime",
+    "@kb-labs/devkit": "workspace:*",
+    "@kb-labs/plugin-runtime": "workspace:*",
     "@types/node": "^24.3.3",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",

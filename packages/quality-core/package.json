@@ -47,6 +47,10 @@
       "import": "./dist/tests/index.js",
       "types": "./dist/tests/index.d.ts"
     },
+    "./dead-code": {
+      "import": "./dist/dead-code/index.js",
+      "types": "./dist/dead-code/index.d.ts"
+    },
     "./dist/*": "./dist/*"
   },
   "files": [
@@ -68,16 +72,16 @@
   },
   "dependencies": {
     "@kb-labs/quality-contracts": "workspace:*",
-    "@kb-labs/sdk": "link:../../../kb-labs-sdk/packages/sdk",
+    "@kb-labs/sdk": "workspace:*",
     "globby": "^11.0.0",
-    "minimatch": "^10.0.1"
+    "minimatch": "^10.0.1",
+    "typescript": "^5.6.3"
   },
   "devDependencies": {
-    "@kb-labs/devkit": "link:../../../kb-labs-devkit",
+    "@kb-labs/devkit": "workspace:*",
     "@types/node": "^24.3.3",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
-    "typescript": "^5.6.3",
     "vitest": "^3.2.4"
   },
   "engines": {
