@@ -38,16 +38,16 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@kb-labs/plugin-contracts": "workspace:*",
+    "@kb-labs/plugin-contracts": "link:../../../../infra/kb-labs-plugin/packages/plugin-contracts",
     "@kb-labs/quality-contracts": "workspace:*",
     "@kb-labs/quality-core": "workspace:*",
-    "@kb-labs/sdk": "workspace:*",
+    "@kb-labs/sdk": "link:../../../../platform/kb-labs-sdk/packages/sdk",
     "react": "latest",
     "zod": "latest"
   },
   "devDependencies": {
-    "@kb-labs/devkit": "workspace:*",
-    "@kb-labs/plugin-runtime": "workspace:*",
+    "@kb-labs/devkit": "link:../../../../infra/kb-labs-devkit",
+    "@kb-labs/plugin-runtime": "link:../../../../infra/kb-labs-plugin/packages/plugin-runtime",
     "@types/node": "^24.3.3",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",

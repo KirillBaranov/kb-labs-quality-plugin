@@ -4,16 +4,16 @@
     "baseUrl": ".",
     "paths": {
       "@kb-labs/plugin-contracts": [
-        "../kb-labs-plugin/packages/plugin-contracts/src/index.ts"
+        "../../infra/kb-labs-plugin/packages/plugin-contracts/src/index.ts"
       ],
       "@kb-labs/plugin-contracts/*": [
-        "../kb-labs-plugin/packages/plugin-contracts/src/*"
+        "../../infra/kb-labs-plugin/packages/plugin-contracts/src/*"
       ],
       "@kb-labs/plugin-runtime": [
-        "../kb-labs-plugin/packages/plugin-runtime/src/index.ts"
+        "../../infra/kb-labs-plugin/packages/plugin-runtime/src/index.ts"
       ],
       "@kb-labs/plugin-runtime/*": [
-        "../kb-labs-plugin/packages/plugin-runtime/src/*"
+        "../../infra/kb-labs-plugin/packages/plugin-runtime/src/*"
       ],
       "@kb-labs/quality-contracts": [
         "packages/quality-contracts/src/index.ts"
@@ -28,10 +28,10 @@
         "packages/quality-core/src/*"
       ],
       "@kb-labs/sdk": [
-        "../kb-labs-sdk/packages/sdk/src/index.ts"
+        "../../platform/kb-labs-sdk/packages/sdk/src/index.ts"
       ],
       "@kb-labs/sdk/*": [
-        "../kb-labs-sdk/packages/sdk/src/*"
+        "../../platform/kb-labs-sdk/packages/sdk/src/*"
       ]
     }
   }
