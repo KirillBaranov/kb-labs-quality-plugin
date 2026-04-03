@@ -213,30 +213,29 @@ export async function analyzeStalePackages(
   // Build dependency graph first
   const graph = buildDependencyGraph(rootDir);
 
-  // Find all package.json files
+  // Find all package.json files (depth=6 covers workspace/subrepo/packages/pkg/...)
   const packageJsonFiles = await globby('**/package.json', {
     cwd: rootDir,
-    ignore: ['**/node_modules/**', '**/.git/**', 'package.json'],
+    ignore: ['**/node_modules/**', '**/.git/**', '**/.kb/**', '**/dist/**', 'package.json'],
     absolute: true,
+    deep: 6,
   });
 
-  const stalePackages: StalePackage[] = [];
-
-  // Analyze each package
-  for (const pkgPath of packageJsonFiles) {
-    try {
-      const content = await readFile(pkgPath, 'utf-8');
-      const pkg = JSON.parse(content);
-      const packagePath = join(pkgPath, '..');
-
-      const stale = await analyzePackage(packagePath, pkg, graph);
-      if (stale) {
-        stalePackages.push(stale);
+  // Analyze packages in parallel
+  const results = await Promise.all(
+    packageJsonFiles.map(async (pkgPath) => {
+      try {
+        const content = await readFile(pkgPath, 'utf-8');
+        const pkg = JSON.parse(content);
+        const packagePath = join(pkgPath, '..');
+        return await analyzePackage(packagePath, pkg, graph);
+      } catch {
+        return null;
       }
-    } catch {
-      // Skip invalid package.json
-    }
-  }
+    })
+  );
+
+  const stalePackages: StalePackage[] = results.filter((r): r is StalePackage => r !== null);
 
   // Calculate total affected (unique packages)
   const allAffected = new Set<string>();

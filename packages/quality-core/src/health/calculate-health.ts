@@ -4,7 +4,7 @@
  * Atomic functions for health checks and scoring.
  */
 
-import { readFile } from 'node:fs/promises';
+import { readFile, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import globby from 'globby';
 
@@ -25,37 +25,30 @@ export interface HealthIssue {
 /**
  * Check for duplicate dependencies across packages
  */
-export async function checkDuplicateDependencies(rootDir: string): Promise<HealthIssue | null> {
-  const packageJsonFiles = await globby('**/package.json', {
+export async function checkDuplicateDependencies(rootDir: string, pkgFiles?: string[]): Promise<HealthIssue | null> {
+  const packageJsonFiles = pkgFiles ?? await globby('**/package.json', {
     cwd: rootDir,
     ignore: ['**/node_modules/**', '**/.git/**'],
     absolute: true,
   });
 
-  // Track all dependencies and their versions
+  // Read all package.json files in parallel
   const depVersions = new Map<string, Set<string>>();
+  const contents = await Promise.all(
+    packageJsonFiles.map(f => readFile(f, 'utf-8').catch(() => null))
+  );
 
-  for (const file of packageJsonFiles) {
+  for (const content of contents) {
+    if (!content) {continue;}
     try {
-      const content = await readFile(file, 'utf-8');
       const pkg = JSON.parse(content);
-
-      const allDeps = {
-        ...pkg.dependencies,
-        ...pkg.devDependencies,
-      };
-
+      const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
       for (const [name, version] of Object.entries(allDeps)) {
         if (typeof version !== 'string') {continue;}
-
-        if (!depVersions.has(name)) {
-          depVersions.set(name, new Set());
-        }
+        if (!depVersions.has(name)) {depVersions.set(name, new Set());}
         depVersions.get(name)!.add(version);
       }
-    } catch {
-      // Skip invalid package.json
-    }
+    } catch { /* skip invalid */ }
   }
 
   // Count duplicates (deps with more than 1 version)
@@ -79,38 +72,26 @@ export async function checkDuplicateDependencies(rootDir: string): Promise<Healt
 /**
  * Check for packages missing README
  */
-export async function checkMissingReadmes(rootDir: string): Promise<HealthIssue | null> {
-  const packageDirs = await globby('**/package.json', {
+export async function checkMissingReadmes(rootDir: string, packageJsonFiles?: string[]): Promise<HealthIssue | null> {
+  const pkgFiles = packageJsonFiles ?? await globby('**/package.json', {
     cwd: rootDir,
     ignore: ['**/node_modules/**', '**/.git/**', 'package.json'],
     absolute: true,
   });
 
-  let missingCount = 0;
-
-  for (const pkgPath of packageDirs) {
+  const hasReadme = async (pkgPath: string): Promise<boolean> => {
     const dir = join(pkgPath, '..');
-    const readmePaths = [
-      join(dir, 'README.md'),
-      join(dir, 'readme.md'),
-      join(dir, 'Readme.md'),
-    ];
-
-    let hasReadme = false;
-    for (const readmePath of readmePaths) {
+    for (const name of ['README.md', 'readme.md', 'Readme.md']) {
       try {
-        await readFile(readmePath, 'utf-8');
-        hasReadme = true;
-        break;
-      } catch {
-        // README doesn't exist
-      }
+        await access(join(dir, name));
+        return true;
+      } catch { /* not found */ }
     }
+    return false;
+  };
 
-    if (!hasReadme) {
-      missingCount++;
-    }
-  }
+  const results = await Promise.all(pkgFiles.map(hasReadme));
+  const missingCount = results.filter(has => !has).length;
 
   if (missingCount === 0) {return null;}
 
@@ -152,10 +133,18 @@ export function scoreToGrade(score: number): 'A' | 'B' | 'C' | 'D' | 'F' {
 export async function calculateHealth(rootDir: string): Promise<HealthResult> {
   const issues: HealthIssue[] = [];
 
-  // Run all checks in parallel
+  // Single globby scan shared by all checks
+  // depth=6 covers workspace/subrepo/packages/pkg-name/src/... without scanning deep trees
+  const packageJsonFiles = await globby('**/package.json', {
+    cwd: rootDir,
+    ignore: ['**/node_modules/**', '**/.git/**', '**/.kb/**', '**/dist/**'],
+    absolute: true,
+    deep: 6,
+  });
+
   const [duplicatesIssue, readmesIssue] = await Promise.all([
-    checkDuplicateDependencies(rootDir),
-    checkMissingReadmes(rootDir),
+    checkDuplicateDependencies(rootDir, packageJsonFiles),
+    checkMissingReadmes(rootDir, packageJsonFiles),
   ]);
 
   if (duplicatesIssue) {issues.push(duplicatesIssue);}

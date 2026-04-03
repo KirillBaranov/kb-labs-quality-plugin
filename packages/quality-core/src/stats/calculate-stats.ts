@@ -17,62 +17,32 @@ export interface MonorepoStats {
 /**
  * Calculate total lines of code in all source files
  */
-export async function calculateLinesOfCode(rootDir: string): Promise<number> {
-  const sourceFiles = await globby('**/*.{ts,tsx,js,jsx}', {
+export async function calculateLinesOfCode(rootDir: string, sourceFiles?: string[]): Promise<number> {
+  const files = sourceFiles ?? await globby('**/*.{ts,tsx,js,jsx}', {
     cwd: rootDir,
-    ignore: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.git/**',
-      '**/build/**',
-      '**/*.test.{ts,tsx,js,jsx}',
-      '**/*.spec.{ts,tsx,js,jsx}',
-    ],
+    ignore: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.kb/**', '**/build/**',
+      '**/*.test.{ts,tsx,js,jsx}', '**/*.spec.{ts,tsx,js,jsx}'],
     absolute: true,
+    deep: 8,
   });
 
-  let totalLines = 0;
-
-  for (const file of sourceFiles) {
-    try {
-      const content = await readFile(file, 'utf-8');
-      const lines = content.split('\n').length;
-      totalLines += lines;
-    } catch {
-      // Skip files that can't be read
-    }
-  }
-
-  return totalLines;
+  const contents = await Promise.all(files.map(f => readFile(f, 'utf-8').catch(() => null)));
+  return contents.reduce((sum, c) => sum + (c ? c.split('\n').length : 0), 0);
 }
 
 /**
  * Calculate total size of source files in bytes
  */
-export async function calculateSize(rootDir: string): Promise<number> {
-  const sourceFiles = await globby('**/*.{ts,tsx,js,jsx}', {
+export async function calculateSize(rootDir: string, sourceFiles?: string[]): Promise<number> {
+  const files = sourceFiles ?? await globby('**/*.{ts,tsx,js,jsx}', {
     cwd: rootDir,
-    ignore: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.git/**',
-      '**/build/**',
-    ],
+    ignore: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.kb/**', '**/build/**'],
     absolute: true,
+    deep: 8,
   });
 
-  let totalSize = 0;
-
-  for (const file of sourceFiles) {
-    try {
-      const stats = await stat(file);
-      totalSize += stats.size;
-    } catch {
-      // Skip files that can't be accessed
-    }
-  }
-
-  return totalSize;
+  const stats = await Promise.all(files.map(f => stat(f).catch(() => null)));
+  return stats.reduce((sum, s) => sum + (s ? s.size : 0), 0);
 }
 
 /**
@@ -95,8 +65,9 @@ export function formatBytes(bytes: number): string {
 export async function countPackages(rootDir: string): Promise<number> {
   const packageJsonFiles = await globby('**/package.json', {
     cwd: rootDir,
-    ignore: ['**/node_modules/**', '**/.git/**'],
+    ignore: ['**/node_modules/**', '**/.git/**', '**/.kb/**'],
     absolute: false,
+    deep: 6,
   });
 
   // Exclude root package.json if it exists
@@ -107,10 +78,18 @@ export async function countPackages(rootDir: string): Promise<number> {
  * Calculate all stats at once
  */
 export async function calculateStats(rootDir: string): Promise<MonorepoStats> {
+  // Single scan for source files shared by LOC and size
+  const sourceFiles = await globby('**/*.{ts,tsx,js,jsx}', {
+    cwd: rootDir,
+    ignore: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.kb/**', '**/build/**'],
+    absolute: true,
+    deep: 8,
+  });
+
   const [packages, loc, size] = await Promise.all([
     countPackages(rootDir),
-    calculateLinesOfCode(rootDir),
-    calculateSize(rootDir),
+    calculateLinesOfCode(rootDir, sourceFiles),
+    calculateSize(rootDir, sourceFiles),
   ]);
 
   return {

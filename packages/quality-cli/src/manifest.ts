@@ -484,6 +484,31 @@ export const manifest = {
     ],
   },
 
+  // Studio V2 — Module Federation pages
+  studio: {
+    version: 2 as const,
+    remoteName: 'qualityPlugin',
+    pages: [
+      {
+        id: 'quality.overview',
+        title: 'Quality',
+        icon: 'CheckCircleOutlined',
+        route: '/p/quality',
+        entry: './QualityOverview',
+        order: 1,
+      },
+    ],
+    menus: [
+      {
+        id: 'quality',
+        label: 'Quality',
+        icon: 'CheckCircleOutlined',
+        target: 'quality.overview',
+        order: 40,
+      },
+    ],
+  },
+
   permissions: pluginPermissions,
 };
 
