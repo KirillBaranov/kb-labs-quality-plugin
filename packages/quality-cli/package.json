@@ -1,8 +1,7 @@
 {
   "name": "@kb-labs/quality-cli",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "type": "module",
-  "private": true,
   "description": "Quality Plugin CLI commands for monorepo analysis, health checks, and automated fixes.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -56,12 +55,24 @@
     "react-router-dom": "^7.0.0"
   },
   "peerDependenciesMeta": {
-    "react": { "optional": true },
-    "react-dom": { "optional": true },
-    "antd": { "optional": true },
-    "@ant-design/icons": { "optional": true },
-    "@tanstack/react-query": { "optional": true },
-    "react-router-dom": { "optional": true }
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "antd": {
+      "optional": true
+    },
+    "@ant-design/icons": {
+      "optional": true
+    },
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@kb-labs/devkit": "link:../../../../infra/kb-labs-devkit",
