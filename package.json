@@ -1,6 +1,6 @@
 {
   "name": "@kb-labs/quality-plugin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "KB Labs Quality Plugin provides monorepo health checks, dependency analysis, and automated fixes. Ensures code quality through comprehensive diagnostics, type safety validation, and intelligent dependency management across packages.",
   "type": "module",
   "author": {
